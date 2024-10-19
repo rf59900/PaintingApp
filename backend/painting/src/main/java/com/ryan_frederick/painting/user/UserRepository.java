@@ -1,35 +1,21 @@
 package com.ryan_frederick.painting.user;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 @Repository
 public class UserRepository {
-    List<User> users = new ArrayList<User>();
+    @Autowired
+    private final JdbcTemplate jdbcTemplate;
 
-    List<User> findAll() {
-        return users;
-    }
-
-    @PostConstruct
-    private void init() {
-        users.add(new User(
-                "Bob",
-                "password123",
-                LocalDateTime.now(),
-                List.of(123, 456, 789),
-                3.5
-        ));
-        users.add(new User(
-                "Same",
-                "password456",
-                LocalDateTime.now(),
-                List.of(123, 456, 789),
-                4.7
-        ));
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 }
