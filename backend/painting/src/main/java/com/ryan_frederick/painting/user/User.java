@@ -10,7 +10,6 @@ public record User(
         String username,
         String password,
         LocalDateTime joined,
-        List<Integer> paintings,
         double averageRating
 ) {}
 
