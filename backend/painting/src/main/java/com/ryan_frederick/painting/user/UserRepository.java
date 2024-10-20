@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class UserRepository {
     @Autowired
     private final JdbcClient jdbcClient;
+
 
     public UserRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
@@ -34,9 +36,42 @@ public class UserRepository {
                 .optional();
     }
 
+    Optional<User> findUserByUsername(String username) {
+        return jdbcClient.sql("SELECT * FROM users WHERE username = :username")
+                .param("username", username)
+                .query(User.class)
+                .optional();
+    }
+
+    // TODO: find all users sort by highest average rating
+    // TODO: find users by newest joined
+    // TODO: find users by oldest joined
+
     void createUser(User user) {
-        int update = jdbcClient.sql("INSERT INTO users(username, password, joined, average_rating) values(?, ?, ?, ?)")
+        int created = jdbcClient.sql("INSERT INTO users(username, password, joined, average_rating) values(?, ?, ?, ?)")
                 .params(List.of(user.username(), user.password(), user.joined(), user.averageRating()))
+                .update();
+    }
+
+    void updateUserAverageRating(Integer id, double newRating) {
+        int updated = jdbcClient.sql("UPDATE users SET average_rating = :newRating WHERE id = :id")
+                .param("newRating", newRating)
+                .param("id", id)
+                .update();
+
+    }
+
+    void updateUserPassword(Integer id, String newPassword) {
+        int updated = jdbcClient.sql("UPDATE users SET password = :newPassword WHERE id = :id")
+                .param("newPassword", newPassword)
+                .param("id", id)
+                .update();
+
+    }
+
+    void deleteUserById(Integer id) {
+        int deleted = jdbcClient.sql("DELETE FROM users WHERE id = :id")
+                .param("id", id)
                 .update();
     }
 }

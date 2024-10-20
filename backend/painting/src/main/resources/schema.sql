@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-    id serial PRIMARY KEY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username varchar(45) NOT NULL,
     password varchar(45) NOT NULL,
     joined TIMESTAMP NOT NULL,

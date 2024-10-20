@@ -7,6 +7,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 public record User(
+        Integer id,
         String username,
         String password,
         LocalDateTime joined,
