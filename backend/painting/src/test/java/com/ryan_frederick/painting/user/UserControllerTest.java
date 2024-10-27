@@ -67,7 +67,8 @@ class UserControllerTest {
                 "Ryan",
                 "Password",
                 LocalDateTime.now(),
-                3.5
+                3.5,
+                "ROLE_USER"
         );
         userRepository.createUser(userToAdd);
     }
@@ -95,12 +96,9 @@ class UserControllerTest {
 
     @Test
     void shouldCreateUser() {
-        User user = new User(
-                null,
+        CreateUserRequest user = new CreateUserRequest(
                 "Bob",
-                "Password123",
-                LocalDateTime.now(),
-                2.4
+                "Password123"
         );
         given()
                 .contentType(ContentType.JSON)

@@ -36,7 +36,7 @@ public class UserRepository {
                 .optional();
     }
 
-    Optional<User> findUserByUsername(String username) {
+    public Optional<User> findUserByUsername(String username) {
         return jdbcClient.sql("SELECT * FROM users WHERE username = :username")
                 .param("username", username)
                 .query(User.class)
@@ -47,9 +47,9 @@ public class UserRepository {
     // TODO: find users by newest joined
     // TODO: find users by oldest joined
 
-    void createUser(User user) {
-        int created = jdbcClient.sql("INSERT INTO users(username, password, joined, average_rating) values(?, ?, ?, ?)")
-                .params(List.of(user.username(), user.password(), user.joined(), user.averageRating()))
+    public void createUser(User user) {
+        int created = jdbcClient.sql("INSERT INTO users(username, password, joined, average_rating, roles) values(?, ?, ?, ?, ?)")
+                .params(List.of(user.username(), user.password(), user.joined(), user.averageRating(), user.roles()))
                 .update();
     }
 

@@ -11,6 +11,7 @@ public record User(
         String username,
         String password,
         LocalDateTime joined,
-        double averageRating
+        double averageRating,
+        String roles
 ) {}
 
