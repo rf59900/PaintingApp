@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
     password varchar(250) NOT NULL,
     joined TIMESTAMP NOT NULL,
     average_rating DOUBLE PRECISION,
-    roles varchar(250)
+    roles varchar(250),
+    refresh_token varchar(500)
 );
 
 CREATE TABLE IF NOT EXISTS painting (

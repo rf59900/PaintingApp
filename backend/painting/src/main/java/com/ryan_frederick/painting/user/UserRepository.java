@@ -66,8 +66,15 @@ public class UserRepository {
                 .param("newPassword", newPassword)
                 .param("id", id)
                 .update();
-
     }
+
+    public void updateUserRefreshToken(String username, String newRefreshToken) {
+        int updated = jdbcClient.sql("UPDATE users SET refresh_token = :newRefreshToken WHERE username = :username")
+                .param("newRefreshToken", newRefreshToken)
+                .param("username", username)
+                .update();
+    }
+
 
     void deleteUserById(Integer id) {
         int deleted = jdbcClient.sql("DELETE FROM users WHERE id = :id")

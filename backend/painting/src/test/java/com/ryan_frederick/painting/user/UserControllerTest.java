@@ -1,7 +1,9 @@
 package com.ryan_frederick.painting.user;
 
+import com.ryan_frederick.painting.auth.AuthTokenResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -62,15 +65,15 @@ class UserControllerTest {
         jdbcClient.sql("TRUNCATE TABLE users RESTART IDENTITY CASCADE")
                 .update();
 
-        User userToAdd = new User(
-                null,
+        CreateUserRequest userToAdd = new CreateUserRequest(
                 "Ryan",
-                "Password",
-                LocalDateTime.now(),
-                3.5,
-                "ROLE_USER"
+                "Password"
         );
-        userRepository.createUser(userToAdd);
+        given()
+                .contentType(ContentType.JSON)
+                .body(userToAdd)
+                .when()
+                .post("/users");
     }
 
     @Test
@@ -111,10 +114,19 @@ class UserControllerTest {
 
     @Test
     void shouldDeleteUser() {
-        delete("/users/1")
-                .then()
-                .statusCode(200);
+        Response response = given()
+                .auth().basic("Ryan", "Password")
+                .post("/login");
 
+        String authToken = response.getBody().as(AuthTokenResponse.class).jwt();
+        String refreshToken = response.getCookie("jwt");
+
+        given()
+        .cookie("jwt", refreshToken)
+        .header("Authorization", "Bearer " + authToken)
+        .delete("/users/1")
+        .then()
+        .statusCode(200);
     }
 
     @Test

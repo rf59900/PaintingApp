@@ -31,7 +31,6 @@ public class UserController {
         return userRepository.findAllUsers();
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/id/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     Optional<User> getUserById(@PathVariable("id") Integer id) {
@@ -70,7 +69,8 @@ public class UserController {
                 encodedPassword,
                 LocalDateTime.now(),
                 0,
-                userRoles
+                userRoles,
+                null
         );
         // TODO: add pass word hashing and set joined attribute to current time
         userRepository.createUser(user);
@@ -82,6 +82,7 @@ public class UserController {
         userRepository.updateUserPassword(toDelete.id(), toDelete.newPassword());
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
     @ResponseStatus(code = HttpStatus.OK)
     void deleteUser(@PathVariable Integer id) {

@@ -59,7 +59,8 @@ class UserRepositoryTest {
                 "Password",
                 LocalDateTime.now(),
                 3.5,
-                "ROLE_USER"
+                "ROLE_USER",
+                null
         );
         userRepository.createUser(userToAdd);
     }
@@ -79,7 +80,8 @@ class UserRepositoryTest {
                 "Password",
                 LocalDateTime.now(),
                 3.5,
-                "ROLE_USER"
+                "ROLE_USER",
+                null
         ));
         List<User> users =  userRepository.findAllUsers();
         assertEquals(2, users.size());

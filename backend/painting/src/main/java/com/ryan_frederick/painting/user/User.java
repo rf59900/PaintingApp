@@ -12,6 +12,7 @@ public record User(
         String password,
         LocalDateTime joined,
         double averageRating,
-        String roles
+        String roles,
+        String refreshToken
 ) {}
 
