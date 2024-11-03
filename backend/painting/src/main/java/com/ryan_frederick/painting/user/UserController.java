@@ -31,6 +31,12 @@ public class UserController {
         return userRepository.findAllUsers();
     }
 
+    @GetMapping("/top")
+    @ResponseStatus(code = HttpStatus.OK)
+    List<User> getAllUsersByRanking() {
+        return userRepository.findAllUsersByRating();
+    }
+
     @GetMapping("/id/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     Optional<User> getUserById(@PathVariable("id") Integer id) {
@@ -72,7 +78,6 @@ public class UserController {
                 userRoles,
                 null
         );
-        // TODO: add pass word hashing and set joined attribute to current time
         userRepository.createUser(user);
     }
 

@@ -84,6 +84,13 @@ class UserControllerTest {
     }
 
     @Test
+    void shouldFindAllUsersByRanking() {
+        get("/users/top")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
     void shouldFindUserById() {
        get("users/id/1")
                .then()

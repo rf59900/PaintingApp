@@ -76,7 +76,7 @@ class UserRepositoryTest {
     void shouldCreateUser() {
         userRepository.createUser(new User(
                 null,
-               "Ryan",
+               "Sam",
                 "Password",
                 LocalDateTime.now(),
                 3.5,
@@ -139,6 +139,25 @@ class UserRepositoryTest {
         userRepository.deleteUserById(1);
         List<User> users = userRepository.findAllUsers();
         assertEquals(0, users.size());
+    }
+
+    @Test
+    void shouldFindAllUsersSortedByRanking() {
+        userRepository.createUser(new User (
+                null,
+                "Bob",
+                "Password",
+                LocalDateTime.now(),
+                5,
+                "ROLE_USER",
+                null
+        ));
+
+        List<User> users = userRepository.findAllUsersByRating();
+
+        assertEquals(users.getFirst().averageRating(), 5);
+        assertEquals(users.get(1).averageRating(), 3.5);
+
     }
 
 }

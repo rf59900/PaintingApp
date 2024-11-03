@@ -9,16 +9,15 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS painting (
-    id bigint GENERATED ALWAYS AS IDENTITY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     title varchar(45) NOT NULL,
     description varchar(45),
     created TIMESTAMP NOT NULL,
     rating DOUBLE PRECISION,
-    image_name varchar(450),
-    PRIMARY KEY (id)
+    image_name varchar(450)
 );
 
 CREATE TABLE IF NOT EXISTS painted (
-    painter INT REFERENCES users (id),
-    painting bigint REFERENCES painting (id)
+    painter INTEGER REFERENCES users (id),
+    painting INTEGER REFERENCES painting (id)
 );

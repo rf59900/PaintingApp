@@ -44,6 +44,14 @@ public class UserRepository {
     }
 
     // TODO: find all users sort by highest average rating
+    public List<User> findAllUsersByRating() {
+        return jdbcClient.sql("SELECT * FROM users ORDER BY average_rating DESC")
+                .query(User.class)
+                .list();
+    }
+
+
+
     // TODO: find users by newest joined
     // TODO: find users by oldest joined
 
