@@ -1,16 +1,21 @@
 package com.ryan_frederick.painting.painting;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 public class PaintingRepository {
+    Logger logger = LogManager.getLogger(PaintingRepository.class);
     @Autowired
     private final JdbcClient jdbcClient;
 
@@ -24,7 +29,7 @@ public class PaintingRepository {
                 .list();
     }
 
-    void createPainting(Painting painting, Integer userId) {
+    public void createPainting(Painting painting, Integer userId) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcClient.sql("INSERT INTO painting(title, description, created, rating, image_name) values(?, ?, ?, ?, ?)")
@@ -33,7 +38,7 @@ public class PaintingRepository {
 
         Integer paintingId = (Integer) keyHolder.getKeys().get("id");
 
-        // create record linking the painting to a painter (user)
+
         jdbcClient.sql("INSERT INTO painted(painter, painting) values(?, ?)")
                 .params(List.of(userId, paintingId))
                 .update();
@@ -41,7 +46,6 @@ public class PaintingRepository {
     }
 
     void deletePainting(Integer id) {
-        // TODO: delete image of painting from aws s3
 
         // delete painted record before deleting painting record due to foreign key constaint
         jdbcClient.sql("DELETE FROM painted WHERE painting = :id")
@@ -60,10 +64,10 @@ public class PaintingRepository {
                 .optional();
     }
 
-    void updatePaintingRating(PaintingRatingUpdate paintingRatingUpdate) {
-        int updated = jdbcClient.sql("UPDATE painting SET rating = :newRating WHERE id = :id")
-                .param("newRating", paintingRatingUpdate.newRating())
-                .param("id", paintingRatingUpdate.id())
+    void updatePaintingRating(Integer paintingId, double newRating) {
+        int updated = jdbcClient.sql("UPDATE painting SET rating = :newRating WHERE id = :paintingId")
+                .param("newRating", newRating)
+                .param("paintingId", paintingId)
                 .update();
     }
 
@@ -71,6 +75,12 @@ public class PaintingRepository {
         return jdbcClient.sql("SELECT * FROM painting WHERE id IN (" +
                 "SELECT painting FROM painted WHERE painter = :id)")
                 .param("id", id)
+                .query(Painting.class)
+                .list();
+    }
+
+    List<Painting> findAllPaintingsTopRated() {
+        return jdbcClient.sql("SELECT * FROM painting ORDER BY rating DESC")
                 .query(Painting.class)
                 .list();
     }

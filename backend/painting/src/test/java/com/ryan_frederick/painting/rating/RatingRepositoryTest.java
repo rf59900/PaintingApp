@@ -1,4 +1,7 @@
-package com.ryan_frederick.painting.painting;
+package com.ryan_frederick.painting.rating;
+
+import com.ryan_frederick.painting.painting.Painting;
+import com.ryan_frederick.painting.painting.PaintingRepository;
 
 import com.ryan_frederick.painting.user.User;
 import com.ryan_frederick.painting.user.UserRepository;
@@ -16,6 +19,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +27,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class PaintingRepositoryTest {
-    private static final Logger log = LoggerFactory.getLogger(PaintingRepositoryTest.class);
+class RatingRepositoryTest {
+    private static final Logger log = LoggerFactory.getLogger(RatingRepositoryTest.class);
     @Autowired
     JdbcClient jdbcClient;
 
@@ -33,6 +37,9 @@ class PaintingRepositoryTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RatingRepository ratingRepository;
 
     @LocalServerPort
     private Integer port;
@@ -78,6 +85,8 @@ class PaintingRepositoryTest {
         );
 
         paintingRepository.createPainting(paintingToAdd, 1);
+
+        ratingRepository.createRating(1, 1, 5);
     }
 
     @DynamicPropertySource
@@ -88,77 +97,53 @@ class PaintingRepositoryTest {
     }
 
     @Test
-    void shouldFindAllPaintings() {
-        List<Painting> paintings = paintingRepository.findAllPaintings();
+    void shouldCreateRating() {
+        ratingRepository.createRating(1, 1, 4);
 
-        assertEquals(1, paintings.size());
+        List<Rating> ratings = ratingRepository.findAllRatings();
+
+        assertEquals(2, ratings.size());
     }
 
     @Test
-    void shouldCreatePainting() {
-        Painting paintingToAdd = new Painting(
-                null,
-                "Starry Night",
-                "A remake of a van gogh classic.",
-                LocalDateTime.now(),
-                4,
-                "placeholder.jpg"
-        );
+    void shouldFindAllRatings() {
+        List<Rating> ratings = ratingRepository.findAllRatings();
 
-        paintingRepository.createPainting(paintingToAdd, 1);
-
-        assertEquals(2, paintingRepository.findAllPaintings().size());
+        assertEquals(1, ratings.size());
     }
 
     @Test
-    void shouldDeletePainting() {
-        paintingRepository.deletePainting(1);
+    void shouldFindAllRatingsForPainting() {
+        List<Rating> ratings = ratingRepository.findAllRatingsForPainting(1);
 
-        assertEquals(0, paintingRepository.findAllPaintings().size());
+        assertEquals(1, ratings.size());
     }
 
     @Test
-    void shouldUpdatePaintingRating() {
-        paintingRepository.updatePaintingRating(1, 4);
+    void shouldFindRating() {
+        Optional<Rating> rating = ratingRepository.findRating(1, 1);
 
-        Double rating = paintingRepository.findPaintingById(1).map(Painting::rating).orElse(null);
+        assertTrue(rating.isPresent());
 
-        assertEquals(4, rating);
+        Integer paintingId = rating.map(Rating::painting).orElse(null);
+        Integer userId = rating.map(Rating::rater).orElse(null);
+
+        assertEquals(1, paintingId);
+        assertEquals(1, userId);
     }
 
     @Test
-    void shouldGetPaintingById() {
-        Optional<Painting> foundPainting = paintingRepository.findPaintingById(1);
+    void shouldFailToFindRating() {
+        Optional<Rating> rating = ratingRepository.findRating(2, 2);
 
-        assertTrue(foundPainting.isPresent());
-        foundPainting.ifPresent(user -> {
-            assertEquals(1, user.id());
-        });
+        assertFalse(rating.isPresent());
     }
-
     @Test
-    void shouldFindAllPaintingsFromUser() {
-        List<Painting> paintings = paintingRepository.findAllPaintingsByUser(1);
-        assertEquals(1, paintings.size());
-        assertEquals("The Mona Lisa", paintings.getFirst().title());
-    }
+    void shouldUpdateRating() {
+        ratingRepository.updateRating(1, 1, 1);
 
-    @Test
-    void shouldFindAllPaintingsTopRated() {
-        Painting paintingToAdd = new Painting(
-                null,
-                "The Last Supper",
-                "An absolute classic.",
-                LocalDateTime.now(),
-                4,
-                "placeholder.jpg"
-        );
+        double ratingValue = ratingRepository.findRating(1, 1).map(Rating::rating).orElse(null);
 
-        paintingRepository.createPainting(paintingToAdd, 1);
-
-        List<Painting> paintings = paintingRepository.findAllPaintingsTopRated();
-
-        assertEquals(paintings.getFirst().rating(), 5);
-        assertEquals(paintings.get(1).rating(), 4);
+        assertEquals(ratingValue, 1);
     }
 }

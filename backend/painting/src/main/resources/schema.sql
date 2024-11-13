@@ -21,3 +21,9 @@ CREATE TABLE IF NOT EXISTS painted (
     painter INTEGER REFERENCES users (id),
     painting INTEGER REFERENCES painting (id)
 );
+
+CREATE TABLE IF NOT EXISTS rating (
+    painting INTEGER REFERENCES painting (id),
+    rater INTEGER REFERENCES users (id),
+    rating DOUBLE PRECISION
+);
