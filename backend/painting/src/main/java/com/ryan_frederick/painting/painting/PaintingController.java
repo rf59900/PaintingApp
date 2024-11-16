@@ -129,4 +129,10 @@ public class PaintingController {
 
         paintingRepository.updatePaintingRating(paintingId, averageRating);
     }
+
+    @PostMapping("/image")
+    @ResponseStatus(HttpStatus.CREATED)
+    String getPaintingUrl(@RequestBody String imageName) {
+        return paintingUploader.createImageUrl(imageName);
+    }
 }

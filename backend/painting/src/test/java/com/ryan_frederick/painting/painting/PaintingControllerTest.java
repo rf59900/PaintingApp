@@ -223,6 +223,20 @@ class PaintingControllerTest {
             assertEquals("Starry Night", paintings[0].title());
 
         }
+
+        @Test
+        void shouldGetPaintingUrl() {
+            String imageName = paintingRepository.findPaintingById(1).map(Painting::imageName).orElse(null);
+
+            given()
+                    .body(imageName)
+                    .post("/painting/image")
+                    .then()
+                    .statusCode(201)
+                    .log()
+                    .all();
+
+        }
     }
 
 
