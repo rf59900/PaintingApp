@@ -5,18 +5,19 @@ import axios from "../api/axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 
+export type JwtPayload = {
+  authorities: String[];
+  exp: Number;
+  iat: Number;
+  iss: String;
+  sub: String;
+};
+
 export const Login = () => {
-  type JwtPayload = {
-    authorities: String[];
-    exp: Number;
-    iat: Number;
-    iss: String;
-    sub: String;
-  };
   const { user, setUser } = useAuth();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const loginUser = async () => {
+  const loginUser = async (username1: string, password: string) => {
     try {
       const response = await axios.post(
         "/login",
@@ -24,14 +25,15 @@ export const Login = () => {
         // basic auth
         {
           auth: {
-            username: "Ryan",
-            password: "Password",
+            username: username1,
+            password: password,
           },
         }
       );
       setUsername("");
       setPassword("");
       const jwt = response?.data?.jwt;
+      console.log(jwt);
       const decoded: JwtPayload = jwtDecode(jwt);
       const username = decoded.sub;
       const roles = decoded.authorities;
@@ -43,6 +45,7 @@ export const Login = () => {
       };
       setUser(newUser);
       console.log(response);
+      //console.log("auth token " + newUser.authToken);
       console.log(user);
     } catch (err) {
       console.error(err);
@@ -55,7 +58,7 @@ export const Login = () => {
       <Link to={"/"}>Home</Link>
       <input value={username} onChange={(e) => setUsername(e.target.value)} />
       <input value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={() => loginUser()}>Login</button>
+      <button onClick={() => loginUser(username, password)}>Login</button>
     </>
   );
 };

@@ -130,6 +130,12 @@ public class PaintingController {
         paintingRepository.updatePaintingRating(paintingId, averageRating);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/test")
+    void test(Authentication authentication) {
+        logger.info(authentication.getName());
+    }
+
     @PostMapping("/image")
     @ResponseStatus(HttpStatus.CREATED)
     String getPaintingUrl(@RequestBody String imageName) {
