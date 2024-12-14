@@ -60,12 +60,12 @@ public class SecurityConfig {
     }
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final JwtRequestFilter jwtRequestFilter;
+    //private final JwtRequestFilter jwtRequestFilter;
 
-    public SecurityConfig(RsaKeyProperties rsaKeyProperties, CustomUserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter) {
+    public SecurityConfig(RsaKeyProperties rsaKeyProperties, CustomUserDetailsService customUserDetailsService) {
         this.rsaKeyProperties = rsaKeyProperties;
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtRequestFilter = jwtRequestFilter;
+       // this.jwtRequestFilter = jwtRequestFilter;
     }
 
 
@@ -76,7 +76,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users", "/error", "/logout", "/users/**", "/painting/**", "/refresh").permitAll()
+                        .requestMatchers("/users", "/logout", "/error", "/users/**", "/painting/**", "/refresh").permitAll()
                         .anyRequest().authenticated())
 
                 .userDetailsService(customUserDetailsService)

@@ -122,7 +122,7 @@ class UserControllerTest {
     @Test
     void shouldDeleteUser() {
         Response response = given()
-                .auth().basic("Ryan", "Password")
+                .auth().preemptive().basic("Ryan", "Password")
                 .post("/login");
 
         String authToken = response.getBody().as(AuthTokenResponse.class).jwt();

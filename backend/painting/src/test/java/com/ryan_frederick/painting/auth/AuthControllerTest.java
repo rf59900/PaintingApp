@@ -1,5 +1,6 @@
 package com.ryan_frederick.painting.auth;
 
+import com.ryan_frederick.painting.painting.PaintingController;
 import com.ryan_frederick.painting.user.CreateUserRequest;
 import com.ryan_frederick.painting.user.User;
 import com.ryan_frederick.painting.user.UserRepository;
@@ -10,7 +11,9 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookie;
 import io.restassured.http.Cookies;
+import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AuthControllerTest {
+    Logger logger = LogManager.getLogger(AuthControllerTest.class);
 
     @Autowired
     JdbcClient jdbcClient;
@@ -92,14 +96,14 @@ class AuthControllerTest {
     void shouldFailToLogout() {
         get("/logout")
                 .then()
-                .statusCode(401);
+                .statusCode(400);
     }
 
     @Test
     void shouldFailToGetRefreshToken() {
         get("/refresh")
                 .then()
-                .statusCode(401);
+                .statusCode(400);
     }
 
     @Test
@@ -124,9 +128,8 @@ class AuthControllerTest {
     @Test
     void shouldGetRefreshToken() {
        Response response = given()
-               .auth().basic("Ryan", "Password")
+               .auth().preemptive().basic("Ryan", "Password")
                .post("/login");
-
        String authToken = response.getBody().as(AuthTokenResponse.class).jwt();
        String refreshToken = response.getCookie("jwt");
 
@@ -146,9 +149,10 @@ class AuthControllerTest {
     @Test
     void shouldLogout() {
         Response response = given()
-                .auth().basic("Ryan", "Password")
+                .auth().preemptive().basic("Ryan", "Password")
                 .post("/login");
 
+        logger.info(response.getBody().asString());
         String authToken = response.getBody().as(AuthTokenResponse.class).jwt();
         String refreshToken = response.getCookie("jwt");
 

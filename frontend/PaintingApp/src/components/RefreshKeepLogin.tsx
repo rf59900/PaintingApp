@@ -5,14 +5,14 @@ import { Outlet } from "react-router-dom";
 
 export const RefreshKeepLogin = () => {
   const refresh = useRefreshToken();
-  const { auth } = useAuth();
-  console.log(auth);
+  const { user } = useAuth();
+  console.log("refresh");
   useEffect(() => {
     const verifyRefreshToken = async () => {
       await refresh();
     };
     console.log("hey");
-    !auth?.accessToken ? verifyRefreshToken() : null;
+    !user?.authToken ? verifyRefreshToken() : null;
   }, []);
 
   return (

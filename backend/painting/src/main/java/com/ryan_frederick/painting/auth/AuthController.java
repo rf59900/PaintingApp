@@ -72,12 +72,22 @@ public class AuthController {
 
         // set cookie and return auth token in the body
         return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(new AuthTokenResponse(authToken));
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(Authentication authentication) {
+    public ResponseEntity<String> logout(@CookieValue("jwt") String reqRefreshToken) {
+        if (reqRefreshToken == null) {
+            return ResponseEntity.badRequest()
+                    .body("{\"message\":\"User is not logged in\"}");
+        }
+
+        // remove refresh token from db
+        String username = jwtUtil.getUsernameFromToken(reqRefreshToken);
+        userRepository.updateUserRefreshToken(username, null);
+
         // create blank cookie that expires instantly
         ResponseCookie jwtCookie = ResponseCookie.from("jwt")
                 .value("")
@@ -87,8 +97,6 @@ public class AuthController {
                 .secure(true)
                 .build();
 
-        // remove refresh token from db
-        userRepository.updateUserRefreshToken(authentication.getName(), null);
 
         // replace refresh token cookie with blank cookie
         return ResponseEntity.ok()
