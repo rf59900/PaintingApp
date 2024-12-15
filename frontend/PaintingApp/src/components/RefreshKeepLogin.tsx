@@ -17,7 +17,6 @@ export const RefreshKeepLogin = () => {
 
   return (
     <>
-      <h1> Hey </h1>
       <Outlet />
     </>
   );

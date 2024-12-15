@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { RefreshKeepLogin } from "./components/RefreshKeepLogin";
 import { Logout } from "./pages/Logout";
+import { Paint } from "./pages/Paint";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Routes>
           <Route element={<RefreshKeepLogin />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/paint" element={<Paint />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
         </Routes>
