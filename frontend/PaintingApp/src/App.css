@@ -16,7 +16,6 @@ html, body {
     left: 0px;
     height: 100%;
     width: 100%;
-    background-color: blue
 }
 
 .canvas {
@@ -53,4 +52,34 @@ html, body {
 .color {
     height: 50%;
     width: 50%;
+}
+
+.changePixelSizeContainer {
+    justify-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    gap: 5%;
+}
+
+.changePixelSizeSymbol {
+    width: 5%;
+}
+
+.currentPixelSize {
+    font-weight: bold;
+}
+
+.changePixelEraserRow {
+    display: flex;
+    border: 1px solid black;
+    height: 10%;
+    width: 90%;
+    
+}
+
+.eraser {
+    border: 1px solid black;
+    margin-right: auto;
 }
