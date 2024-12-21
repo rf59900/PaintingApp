@@ -3,10 +3,12 @@ import { useAuth } from "../context/AuthContext";
 import { ColorPicker } from "../components/ColorPicker";
 import { ChangePixelSize } from "../components/ChangePixelSize";
 import { Eraser } from "../components/Eraser";
+import { ClearCanvas } from "../components/ClearCanvas";
 
 export const Paint = () => {
   const { user } = useAuth();
   const canvas = useRef<HTMLCanvasElement>(null);
+  const canvasGUI = useRef<HTMLDivElement>(null);
 
   const [color, setColor] = useState("black");
   const [pixelSize, setPixelSize] = useState(10);
@@ -22,6 +24,33 @@ export const Paint = () => {
 
   const handleErase = (erase: boolean) => {
     setErase(erase);
+  };
+
+  const clearCanvas = () => {
+    Canvas.ctx?.clearRect(0, 0, 10000, 10000);
+  };
+
+  // re-aligns the canvas gui on page load and resize/screen rotation
+  const resizeGUI = () => {
+    const pos = Canvas.canvas?.getBoundingClientRect();
+    if (!canvasGUI.current) {
+      return;
+    }
+    canvasGUI.current.style.top = pos?.top.toString() + "px";
+    canvasGUI.current.style.left = pos?.left.toString() + "px";
+  };
+
+  const displayGUI = (e: KeyboardEvent) => {
+    if (canvasGUI.current && e.key == "Escape") {
+      if (!Canvas.canvas) {
+        return;
+      }
+      if (canvasGUI.current.style.display == "none") {
+        canvasGUI.current.style.display = "flex";
+      } else {
+        canvasGUI.current.style.display = "none";
+      }
+    }
   };
 
   class Canvas {
@@ -89,16 +118,28 @@ export const Paint = () => {
       Canvas.canvas = canvas.current;
       Canvas.ctx = ctx;
     }
+
+    if (canvasGUI.current) {
+      document.addEventListener("keydown", displayGUI);
+    }
+
+    window.addEventListener("resize", resizeGUI);
+    window.addEventListener("load", resizeGUI);
   }, []);
 
   return (
     <>
       <div className="container">
         <div className="changePixelEraserRow">
+          <ClearCanvas clearCanvas={clearCanvas} />
           <ChangePixelSize pixelSize={pixelSize} setPixelSize={setPixelSize} />
           <Eraser erase={erase} setErase={handleErase} />
         </div>
         <ColorPicker color={color} setColor={handleColorChange} />
+        <div ref={canvasGUI} className="canvasGUI">
+          <button className="GUIButton">Save</button>
+          <button className="GUIButton">Upload</button>
+        </div>
         <canvas
           ref={canvas}
           onMouseMove={(e) => handleMouseMove(e)}

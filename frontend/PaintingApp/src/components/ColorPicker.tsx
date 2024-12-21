@@ -56,12 +56,12 @@ export const ColorPicker = ({ color, setColor }: ColorAndSetColor) => {
           <polygon points="14,6 8,12 14,18" />
         </svg>
         <div className="colorPicker">
-          {currentColors.map((itemColor) => {
+          {currentColors.map((itemColor, i) => {
             return (
               <div
                 key={itemColor}
                 style={{ backgroundColor: itemColor }}
-                className="color"
+                className={i == 4 ? "selectedColor" : "color"}
               />
             );
           })}
