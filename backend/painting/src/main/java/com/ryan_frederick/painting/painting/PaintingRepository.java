@@ -36,7 +36,8 @@ public class PaintingRepository {
                 .params(List.of(painting.title(), painting.description(), painting.created(), painting.rating(), painting.imageName()))
                 .update(keyHolder);
 
-        Integer paintingId = (Integer) keyHolder.getKeys().get("id");
+        logger.info( keyHolder.getKeys().get("id"));
+        Long paintingId = (Long) keyHolder.getKeys().get("id");
 
 
         jdbcClient.sql("INSERT INTO painted(painter, painting) values(?, ?)")

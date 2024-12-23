@@ -4,9 +4,11 @@ import { ColorPicker } from "../components/ColorPicker";
 import { ChangePixelSize } from "../components/ChangePixelSize";
 import { Eraser } from "../components/Eraser";
 import { ClearCanvas } from "../components/ClearCanvas";
+import { useNavigate } from "react-router-dom";
 
 export const Paint = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const canvas = useRef<HTMLCanvasElement>(null);
   const canvasGUI = useRef<HTMLDivElement>(null);
 
@@ -28,6 +30,16 @@ export const Paint = () => {
 
   const clearCanvas = () => {
     Canvas.ctx?.clearRect(0, 0, 10000, 10000);
+  };
+
+  const handleUpload = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    navigate("/upload", {
+      state: Canvas.canvas?.toDataURL(),
+    });
   };
 
   // re-aligns the canvas gui on page load and resize/screen rotation
@@ -138,7 +150,9 @@ export const Paint = () => {
         <ColorPicker color={color} setColor={handleColorChange} />
         <div ref={canvasGUI} className="canvasGUI">
           <button className="GUIButton">Save</button>
-          <button className="GUIButton">Upload</button>
+          <button onClick={handleUpload} className="GUIButton">
+            Upload
+          </button>
         </div>
         <canvas
           ref={canvas}

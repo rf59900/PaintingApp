@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS painting (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     title varchar(45) NOT NULL,
-    description varchar(45),
+    description varchar(450),
     created TIMESTAMP NOT NULL,
     rating DOUBLE PRECISION,
     image_name varchar(450)

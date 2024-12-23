@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -51,10 +52,17 @@ public class PaintingController {
 
     // only logged in users can create paintings
     @PreAuthorize("hasRole('ROLE_USER')")
-    @ResponseStatus(HttpStatus.OK)
     @PostMapping("")
-    void createPainting(@RequestBody CreatePaintingRequest createPaintingRequest, Authentication authentication) throws IOException {
+    public ResponseEntity<String> createPainting(@RequestBody CreatePaintingRequest createPaintingRequest, Authentication authentication) throws IOException {
         String username = authentication.getName();
+
+        if (createPaintingRequest.title().length() > 45) {
+            return ResponseEntity.badRequest().body("ERROR: Title is too long.");
+        }
+
+        if (createPaintingRequest.description().length() > 450) {
+            return ResponseEntity.badRequest().body("ERROR: Description is too long.");
+        }
 
         // get id of user who created the painting
         Integer id = userRepository.findUserByUsername(username).map(User::id).orElse(null);
@@ -72,6 +80,8 @@ public class PaintingController {
         );
 
         paintingRepository.createPainting(paintingToAdd, id);
+
+        return ResponseEntity.ok("Painting created!");
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

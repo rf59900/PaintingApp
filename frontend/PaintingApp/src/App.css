@@ -116,3 +116,8 @@ html, body {
     width: 5%;
     border: 1px solid black;
 }
+
+.uploadPaintingPreview {
+    height: 50%;
+    width: 50%;
+}
