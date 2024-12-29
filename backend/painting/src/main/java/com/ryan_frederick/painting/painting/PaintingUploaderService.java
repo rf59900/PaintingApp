@@ -90,6 +90,7 @@ public class PaintingUploaderService {
     }
 
     public String createImageUrl(String imageName) {
+        logger.info("attempting to generate url for image name: " + imageName);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(imageName)

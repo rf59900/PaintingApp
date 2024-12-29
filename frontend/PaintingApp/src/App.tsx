@@ -7,6 +7,7 @@ import { RefreshKeepLogin } from "./components/RefreshKeepLogin";
 import { Logout } from "./pages/Logout";
 import { Paint } from "./pages/Paint";
 import { UploadPainting } from "./pages/UploadPainting";
+import { Paintings } from "./pages/Paintings";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/paint" element={<Paint />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/paintings" element={<Paintings />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

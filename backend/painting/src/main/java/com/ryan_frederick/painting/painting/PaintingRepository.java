@@ -37,7 +37,7 @@ public class PaintingRepository {
                 .update(keyHolder);
 
         logger.info( keyHolder.getKeys().get("id"));
-        Long paintingId = (Long) keyHolder.getKeys().get("id");
+        Integer paintingId = (Integer) keyHolder.getKeys().get("id");
 
 
         jdbcClient.sql("INSERT INTO painted(painter, painting) values(?, ?)")
